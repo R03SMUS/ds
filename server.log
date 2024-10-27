@@ -5,4 +5,18 @@
 2024/10/27 12:15:34 x: hello y 6
 2024/10/27 12:15:43 Server: Participant x left Chitty-Chat  7
 2024/10/27 12:15:49 Server: Participant y left Chitty-Chat  8
-g
+2024/10/27 15:56:57 Server is listening on [::]:42069
+2024/10/27 15:57:41 Server: Participant x joined Chitty-Chat! 1
+2024/10/27 15:57:43 Server: Participant y joined Chitty-Chat! 1
+2024/10/27 15:57:48 x: hello 5
+2024/10/27 15:57:56 y: hello x 7
+2024/10/27 15:58:01 Server: Participant x left Chitty-Chat  7
+2024/10/27 15:58:04 Server: Participant y left Chitty-Chat  7
+2024/10/27 19:01:46 Server is listening on [::]:42069
+2024/10/27 19:01:57 Server: Participant helo joined Chitty-Chat! 1
+2024/10/27 19:02:26 Error receiving from stream: rpc error: code = Canceled desc = context canceled
+2024/10/27 19:02:53 Server is listening on [::]:42069
+2024/10/27 19:03:00 Server: Participant x joined Chitty-Chat! 1
+2024/10/27 19:03:04 x: hello 4
+2024/10/27 19:03:10 x:  6
+2024/10/27 19:03:10 Error receiving from stream: rpc error: code = Canceled desc = context canceled

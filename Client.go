@@ -64,6 +64,11 @@ func main() {
 		text, _ := reader.ReadString('\n')
 		text = strings.TrimSpace(text)
 
+		if len(text) > 128 {
+			log.Printf("message too long!")
+			continue
+		}
+
 		if text == "/exit" || text == "/quit" {
 			stream.CloseSend()
 			conn.Close()
@@ -71,6 +76,7 @@ func main() {
 		}
 		locallamport++
 		// Send the message to the server
+
 		if err := stream.Send(&pb.Message{User: name, Text: text, Lamport: locallamport}); err != nil {
 			log.Fatalf("Failed to send message: %v", err)
 		}

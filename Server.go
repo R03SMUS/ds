@@ -85,6 +85,7 @@ func (s *server) JoinChat(stream pb.Chat_JoinChatServer) error {
 		}
 
 		// Broadcast the received message to all connected clients.
+		s.logicalClock = int64(math.Max(float64(s.logicalClock), float64(in.Lamport)) + 1)
 		s.broadcast(in)
 	}
 
@@ -94,7 +95,6 @@ func (s *server) JoinChat(stream pb.Chat_JoinChatServer) error {
 func (s *server) broadcast(msg *pb.Message) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	s.logicalClock = int64(math.Max(float64(s.logicalClock), float64(msg.Lamport)) + 1)
 
 	var lamport = s.logicalClock
 
