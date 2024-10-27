@@ -9,11 +9,14 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"io"
 	"log"
+	"math"
 	"os"
 	"strings"
 )
 
 func main() {
+	var locallamport int64 = 1
+
 	conn, err := grpc.NewClient("localhost:42069", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
@@ -41,7 +44,9 @@ func main() {
 			if err != nil {
 				log.Fatalf("Failed to receive a message: %v", err)
 			}
-			fmt.Printf("%s: %s\n", in.User, in.Text)
+			locallamport = int64(math.Max(float64(locallamport), float64(in.Lamport)) + 1) //this seems stupid. lol
+
+			log.Printf("%s: %s %d\n", in.User, in.Text, in.Lamport)
 		}
 	}()
 
@@ -50,7 +55,7 @@ func main() {
 	name, _ := reader.ReadString('\n')
 	name = strings.TrimSpace(name)
 
-	if err := stream.Send(&pb.Message{User: name, Text: name + " Joined the chat"}); err != nil {
+	if err := stream.Send(&pb.Message{User: name, Text: name + " Joined the chat", Lamport: locallamport}); err != nil {
 		log.Fatalf("Failed to send message: %v", err)
 	}
 	// Goroutine for sending user messages to the server
@@ -66,7 +71,7 @@ func main() {
 		}
 
 		// Send the message to the server
-		if err := stream.Send(&pb.Message{User: name, Text: text}); err != nil {
+		if err := stream.Send(&pb.Message{User: name, Text: text, Lamport: locallamport}); err != nil {
 			log.Fatalf("Failed to send message: %v", err)
 		}
 	}

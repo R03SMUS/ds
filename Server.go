@@ -6,7 +6,6 @@ import (
 	"io"
 	"log"
 	"net"
-	"strconv"
 	"sync"
 )
 
@@ -25,7 +24,7 @@ func main() {
 
 	// Initialize the server with a client map.
 	s := grpc.NewServer()
-	pb.RegisterChatServer(s, &server{clients: make(map[string]pb.Chat_JoinChatServer), logicalClock: 0})
+	pb.RegisterChatServer(s, &server{clients: make(map[string]pb.Chat_JoinChatServer), logicalClock: 1})
 
 	log.Printf("Server is listening on %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
@@ -51,7 +50,7 @@ func (s *server) JoinChat(stream pb.Chat_JoinChatServer) error {
 	s.mu.Unlock()
 
 	// Broadcast a message to notify that the user has joined.
-	var join = "Participant " + user + " joined Chitty-Chat! "
+	var join = "Participant " + user + " joined Chitty-Chat!"
 
 	s.broadcast(&pb.Message{User: "Server", Text: join})
 
@@ -65,7 +64,7 @@ func (s *server) JoinChat(stream pb.Chat_JoinChatServer) error {
 			s.mu.Unlock()
 
 			var left = "Participant " + user + " left Chitty-Chat "
-			s.broadcast(&pb.Message{User: "Server", Text: left})
+			s.broadcast(&pb.Message{User: "Server", Text: left, Lamport: int64(s.logicalClock)})
 			break
 		}
 		if err != nil {
@@ -85,9 +84,7 @@ func (s *server) broadcast(msg *pb.Message) {
 	defer s.mu.Unlock()
 	s.logicalClock = s.logicalClock + 1
 
-	log.Printf("%s: %s at lamport time %s", msg.User, msg.Text, strconv.Itoa(s.logicalClock))
-
-	msg.Text = msg.Text + " at lamport time " + strconv.Itoa(s.logicalClock)
+	log.Printf("%s: %s %d", msg.User, msg.Text, msg.Lamport)
 
 	for _, clientStream := range s.clients {
 		if err := clientStream.Send(msg); err != nil {

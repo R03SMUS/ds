@@ -12,4 +12,5 @@ service Chat {
 message Message {
   string user = 1;
   string text = 2;
+  int64 lamport = 3;
 }
