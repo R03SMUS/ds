@@ -64,7 +64,7 @@ func main() {
 		text, _ := reader.ReadString('\n')
 		text = strings.TrimSpace(text)
 
-		if len(text) > 128 {
+		if len(text) > 128 { //IIRC chinese charecters and emojis, and such counts for 2 (sometimes?) correct way would be converting to runes and counting them maybe.
 			log.Printf("message too long!")
 			continue
 		}
