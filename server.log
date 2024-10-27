@@ -1,0 +1,9 @@
+2024/10/27 11:48:57 Server is listening on [::]:42069
+2024/10/27 11:49:07 Server: Participant x joined Chitty-Chat! 0
+2024/10/27 11:49:10 Server: Participant y joined Chitty-Chat! 0
+2024/10/27 11:49:13 y: hello 2
+2024/10/27 11:49:16 x: hello x 4
+2024/10/27 11:49:32 y: goodbye 5
+2024/10/27 11:49:38 x: goodbye 6
+2024/10/27 11:49:43 Server: Participant y left Chitty-Chat  7
+2024/10/27 11:49:46 Server: Participant x left Chitty-Chat  8

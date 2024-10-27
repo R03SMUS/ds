@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"os"
 	"sync"
 )
 
@@ -13,10 +14,20 @@ type server struct {
 	pb.UnimplementedChatServer
 	mu           sync.Mutex
 	clients      map[string]pb.Chat_JoinChatServer
-	logicalClock int
+	logicalClock int64
 }
 
 func main() {
+	// Open or create a log file
+	logFile, err := os.OpenFile("server.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatalf("failed to open log file: %v", err)
+	}
+	defer logFile.Close()
+
+	// Set log output to the file
+	log.SetOutput(logFile)
+
 	lis, err := net.Listen("tcp", ":42069")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -82,7 +93,7 @@ func (s *server) JoinChat(stream pb.Chat_JoinChatServer) error {
 func (s *server) broadcast(msg *pb.Message) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	s.logicalClock = s.logicalClock + 1
+	s.logicalClock = msg.Lamport + 1
 
 	log.Printf("%s: %s %d", msg.User, msg.Text, msg.Lamport)
 
