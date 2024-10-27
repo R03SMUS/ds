@@ -5,6 +5,7 @@ import (
 	"google.golang.org/grpc"
 	"io"
 	"log"
+	"math"
 	"net"
 	"os"
 	"sync"
@@ -93,9 +94,11 @@ func (s *server) JoinChat(stream pb.Chat_JoinChatServer) error {
 func (s *server) broadcast(msg *pb.Message) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	s.logicalClock = msg.Lamport + 1
+	s.logicalClock = int64(math.Max(float64(s.logicalClock), float64(msg.Lamport)) + 1)
 
-	log.Printf("%s: %s %d", msg.User, msg.Text, msg.Lamport)
+	var lamport = s.logicalClock
+
+	log.Printf("%s: %s %d", msg.User, msg.Text, lamport)
 
 	for _, clientStream := range s.clients {
 		if err := clientStream.Send(msg); err != nil {

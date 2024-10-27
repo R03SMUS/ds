@@ -69,7 +69,7 @@ func main() {
 			conn.Close()
 			break
 		}
-
+		locallamport++
 		// Send the message to the server
 		if err := stream.Send(&pb.Message{User: name, Text: text, Lamport: locallamport}); err != nil {
 			log.Fatalf("Failed to send message: %v", err)
